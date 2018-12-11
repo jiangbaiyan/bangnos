@@ -4,17 +4,52 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3ad69b3688ee9ac7290a811570faef2",
-    "packages": [],
+    "content-hash": "f5e7eed65623d1f2701d82990ae58d9d",
+    "packages": [
+        {
+            "name": "flc/dysms",
+            "version": "v1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/flc1125/dysms.git",
+                "reference": "a32a8f7ae8a493d4eb48a8d82c200b3b358c74d1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/flc1125/dysms/zipball/a32a8f7ae8a493d4eb48a8d82c200b3b358c74d1",
+                "reference": "a32a8f7ae8a493d4eb48a8d82c200b3b358c74d1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Flc\\Dysms\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "阿里短信-适用Laravel、Yii、Thinkphp等任何PHP项目...",
+            "keywords": [
+                "alisms",
+                "aliyun",
+                "dysms",
+                "flc",
+                "阿里短信"
+            ],
+            "time": "2018-01-16T03:55:46+00:00"
+        }
+    ],
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": {
-        "ext-curl": "*",
-        "ext-pdo": "*"
-    },
+    "platform": [],
     "platform-dev": []
 }

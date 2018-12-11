@@ -24,9 +24,7 @@
     "preferred-install": "dist"
   },
   "require": {
-    "ext-curl": "*",
-    "ext-pdo": "*",
-    "ext-json": "*"
+      "flc/dysms": "^1.0",
   },
   "scripts": {
     "post-autoload-dump": [

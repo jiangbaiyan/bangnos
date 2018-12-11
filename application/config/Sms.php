@@ -1,4 +1,3 @@
-
 <?php
 /**
  * 配置示例
@@ -10,11 +9,11 @@
 
 return array(
 
-    'ali' => array(
-        'ACCESS_KEY_ID'     => '',
-        'ACCESS_KEY_SECRET' => '',
-        'SIGN_NAME'         => '',
-        'TEMPLATE_CODE'     => '',
+    'aliSms' => array(
+        'ACCESS_KEY_ID'     => 'LTAIFUVgskph3h00',
+        'ACCESS_KEY_SECRET' => 'eq1CrL826196CvOm65wc7n5BPN3PZ9',
+        'SIGN_NAME'         => '帮帮吧',
+        'TEMPLATE_CODE'     => 'SMS_126460515',
     )
 
 );
