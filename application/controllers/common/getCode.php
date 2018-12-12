@@ -22,14 +22,13 @@ class Common_GetCodeController extends BaseController{
     public function checkParam()
     {
         Validator::make($this->params = Request::all(), array(
-            'phone' => 'phone'
+            'phone' => 'phone|required'
         ));
     }
 
 
     /**
      * 发送短信接口
-     * @throws \Nos\Exception\CoreException
      * @throws \Nos\Exception\OperateFailedException
      */
     public function indexAction()
@@ -41,7 +40,7 @@ class Common_GetCodeController extends BaseController{
         ));
         //验证用
         $key = sprintf(self::REDIS_SMS_VERIFY, $phone);
-        Redis::set($key,$code, 60);
+        Redis::set($key,$code, 61);
         Response::apiSuccess();
     }
 

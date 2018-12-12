@@ -29,18 +29,23 @@ class Sms{
      * 初始化对象
      * @throws \Nos\Exception\CoreException
      */
-    private static function init(){
-        if (!self::$client instanceof Client){
+    private static function init()
+    {
+        if (empty(self::$config)) {
             self::$config = Config::get('sms.aliSms');
+        }
+        if (!self::$client instanceof Client) {
             $params = array(
-                'accessKeyId'    => self::$config['ACCESS_KEY_ID'],
+                'accessKeyId' => self::$config['ACCESS_KEY_ID'],
                 'accessKeySecret' => self::$config['ACCESS_KEY_SECRET'],
             );
             self::$client = new Client($params);
         }
-        if (!self::$sendSms instanceof SendSms){
+        if (!self::$sendSms instanceof SendSms) {
             self::$sendSms = new SendSms();
         }
+        self::$sendSms->setSignName(self::$config['SIGN_NAME']);
+        self::$sendSms->setTemplateCode(self::$config['TEMPLATE_CODE']);
     }
 
 
@@ -49,24 +54,24 @@ class Sms{
      * @param $phone
      * @param array $data
      * @throws OperateFailedException
-     * @throws \Nos\Exception\CoreException
      */
-    public static function send($phone, $data = array()){
-        self::init();
-        $sendSms = self::$sendSms;
-        $sendSms->setPhoneNumbers($phone);
-        $sendSms->setSignName('帮帮吧');
-        $sendSms->setTemplateCode('SMS_126460515');
-        if (!empty($data)){
-            $sendSms->setTemplateParam($data);
-        }
-        try{
-            $res = self::$client->execute($sendSms);
-            $res = json_decode(json_encode($res),true);
-            if ($res['Code'] != 'OK'){
+    public static function send($phone, $data = array())
+    {
+        try {
+            if (empty($phone)) {
+                throw new OperateFailedException('empty phone number');
+            }
+            self::init();
+            self::$sendSms->setPhoneNumbers($phone);
+            if (!empty($data)) {
+                self::$sendSms->setTemplateParam($data);
+            }
+            $res = self::$client->execute(self::$sendSms);
+            $res = json_decode(json_encode($res), true);
+            if ($res['Code'] != 'OK') {
                 throw new OperateFailedException($res['Message']);
             }
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::fatal('sms|send_sms_failed|msg:' . json_encode($e->getMessage()));
             throw new OperateFailedException('短信官方接口异常,请稍后重试');
         }
