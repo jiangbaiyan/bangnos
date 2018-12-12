@@ -16,7 +16,7 @@ class TestModel{
      * @return mixed
      * @throws \Nos\Exception\CoreException
      */
-    public function getData(){
+    public static function getData(){
         $sql = 'select * from test where id = ?';
         $data = Db::fetchAll($sql, array(2));
         return $data;

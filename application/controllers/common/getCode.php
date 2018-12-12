@@ -13,7 +13,7 @@ use Sms\Sms;
 use Nos\Comm\Redis;
 
 
-class Common_GetCode extends BaseController{
+class Common_GetCodeController extends BaseController{
 
     const REDIS_SMS_VERIFY = 'bang_sms_verify_%s';
 
@@ -22,7 +22,7 @@ class Common_GetCode extends BaseController{
     public function checkParam()
     {
         Validator::make($this->params = Request::all(), array(
-            'phone' => 'required|phone'
+            'phone' => 'phone'
         ));
     }
 

@@ -13,7 +13,7 @@ use Nos\Http\Request;
 use Nos\Comm\Redis;
 use Nos\Http\Response;
 
-class Common_Verify extends BaseController{
+class Common_VerifyController extends BaseController{
 
     const REDIS_SMS_VERIFY = 'bang_sms_verify_%s';
 

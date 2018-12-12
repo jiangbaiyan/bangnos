@@ -23,16 +23,18 @@ class Sms{
 
     private static $sendSms;
 
+    private static $config;
+
     /**
      * 初始化对象
      * @throws \Nos\Exception\CoreException
      */
     private static function init(){
         if (!self::$client instanceof Client){
-            $config = Config::get('sms.aliSms');
+            self::$config = Config::get('sms.aliSms');
             $params = array(
-                'accessKeyId'    => $config['ACCESS_KEY_ID'],
-                'accessKeySecret' => $config['ACCESS_KEY_SECRET'],
+                'accessKeyId'    => self::$config['ACCESS_KEY_ID'],
+                'accessKeySecret' => self::$config['ACCESS_KEY_SECRET'],
             );
             self::$client = new Client($params);
         }

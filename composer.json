@@ -24,7 +24,7 @@
     "preferred-install": "dist"
   },
   "require": {
-      "flc/dysms": "^1.0",
+      "flc/dysms": "^1.0"
   },
   "scripts": {
     "post-autoload-dump": [
