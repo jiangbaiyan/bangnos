@@ -50,7 +50,7 @@ class OrderModel{
      * @return mixed
      * @throws \Nos\Exception\CoreException
      */
-    public function createOrder($data){
+    public function create($data){
         $keys = array_keys($data);
         $vals = array_values($data);
         $paras = array_fill(0, count($keys),"?");
@@ -66,7 +66,7 @@ class OrderModel{
      * @return mixed
      * @throws \Nos\Exception\CoreException
      */
-    public function deleteOrder($isSoft = false, $ext = '', $bind = array()){
+    public function delete($isSoft = false, $ext = '', $bind = array()){
         if ($isSoft){
             $time = date('Y-m-d H:i:s');
             $sql = "update {$this->table} set 'deleted_at' = {$time}" . ' ' . $ext;
@@ -84,7 +84,7 @@ class OrderModel{
      * @return mixed
      * @throws \Nos\Exception\CoreException
      */
-    public function getOrder($select = array(), $ext = '', $bind = array()){
+    public function get($select = array(), $ext = '', $bind = array()){
         if (!is_array($select)){
             $fields = $select;
         } else if (empty($select)){
@@ -97,6 +97,11 @@ class OrderModel{
             $sql .= ' ' . $ext;
         }
         return Db::fetchAll($sql, $bind);
+    }
+
+    public function update($fields = array(), $ext = '', $bind = array()){
+
+
     }
 
 }

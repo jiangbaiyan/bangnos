@@ -58,7 +58,7 @@ class AskForHelp_ReleaseOrderController extends BaseController{
         $data['latitude'] = $this->params['latitude'];
         $data['sender_id'] = $this->user->id;
         $orderModel = new OrderModel();
-        $rows = $orderModel->createOrder($data);
+        $rows = $orderModel->create($data);
         if (!$rows){
             Log::fatal('ask|insert_into_orders_failed|data:' . json_encode($data));
             throw new OperateFailedException('新订单创建失败，请重试');

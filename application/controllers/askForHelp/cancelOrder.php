@@ -1,6 +1,5 @@
 <?php
 
-use Nos\Comm\Db;
 use Nos\Comm\Log;
 use Nos\Comm\Validator;
 use Nos\Exception\OperateFailedException;
@@ -36,7 +35,8 @@ class AskForHelp_CancelOrder extends BaseController{
     {
         $id = $this->params['id'];
         $order = new OrderModel();
-        $rows = $order->deleteOrder(true, 'where id = ?', array($id));
+        $rows = $order->delete(true, 'where id = ?', array($id));
+        $rows = $order->update();
         if (!$rows){
             Log::fatal('ask|cancel_order_failed|id:' , $id);
             throw new OperateFailedException('订单不存在或取消失败');

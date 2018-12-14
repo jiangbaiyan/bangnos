@@ -183,6 +183,17 @@ class Redis
     }
 
     /**
+     *    rpush
+     */
+    public static function rpop($key)
+    {
+        if(!isset(self::$redis)){
+            self::connect();
+        }
+        return self::$redis->rpop($key);
+    }
+
+    /**
      * lrange
      */
     public static function lrange($key, $start, $end)
