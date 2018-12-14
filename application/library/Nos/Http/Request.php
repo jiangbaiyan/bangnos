@@ -95,34 +95,25 @@ class Request{
      * 发送Http请求
      * @param $type
      * @param $url
-     * @param array $params
+     * @param array $postData
      * @param int $retry
      * @param int $timeout
+     * @param array $options
      * @return bool|string
      * @throws OperateFailedException
      */
-    public static function send($type, $url, $params = array(), $retry = 3, $timeout = 20){
-        if (!is_array($params)){
-            Log::fatal('curl|illegal_request_params|params:' . json_encode($params));
-            throw new OperateFailedException('请求参数格式不合法');
-        }
+    public static function send($type, $url, $postData = array(), $options = array(), $retry = 3, $timeout = 20){
         $ch = curl_init($url);
         curl_setopt($ch,CURLOPT_RETURNTRANSFER,true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $timeout);
         curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        if (!empty($params['header'])){
-            curl_setopt($ch,CURLOPT_HTTPHEADER,$params['header']);
+        if (!empty($options)){
+            curl_setopt_array($ch, $options);
         }
         $type = strtoupper($type);
         if ($type == 'POST'){
-            curl_setopt($ch,CURLOPT_POST,true);
-            if (!empty($params['json'])){
-                curl_setopt($ch,CURLOPT_POSTFIELDS,$params['json']);
-            } else if (!empty($params['form'])) {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $params['form']);
-            } else{
-                curl_setopt($ch,CURLOPT_POSTFIELDS,http_build_query($params));
-            }
+            curl_setopt($ch,CURLOPT_POST, true);
+            curl_setopt($ch,CURLOPT_POSTFIELDS, http_build_query($postData));
         }
         $res = curl_exec($ch);
         if (empty($res)){
@@ -133,10 +124,11 @@ class Request{
                 }
             }
             if ($i == $retry){
-                Log::fatal('curl|send_request_error|url:' . $url . '|type:' . $type . '|params:0 . ' .$params . '|retry:' . $retry . '|curl_error:' . json_encode(curl_error($ch)));
+                Log::fatal('curl|send_request_error|url:' . $url . '|type:' . $type . '|params:' .$postData . '|retry:' . $retry . '|curl_error:' . json_encode(curl_error($ch)));
                 throw new OperateFailedException('发送请求失败，请重试');
             }
         }
+        Log::fatal(json_encode('curl|send_request_error|url:' . $url . '|type:' . $type . '|params:' .json_encode($postData) . '|retry:' . $retry . '|curl_error:' . json_encode(curl_error($ch))));
         curl_close($ch);
         return $res;
     }

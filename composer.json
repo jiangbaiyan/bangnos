@@ -24,7 +24,8 @@
     "preferred-install": "dist"
   },
   "require": {
-      "flc/dysms": "^1.0"
+      "flc/dysms": "^1.0",
+      "firebase/php-jwt": "^5.0"
   },
   "scripts": {
     "post-autoload-dump": [

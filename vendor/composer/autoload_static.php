@@ -10,6 +10,7 @@ class ComposerStaticInit0a2343baf2a47a776d5eab0d8cda445d
         'F' => 
         array (
             'Flc\\Dysms\\' => 10,
+            'Firebase\\JWT\\' => 13,
         ),
     );
 
@@ -17,6 +18,10 @@ class ComposerStaticInit0a2343baf2a47a776d5eab0d8cda445d
         'Flc\\Dysms\\' => 
         array (
             0 => __DIR__ . '/..' . '/flc/dysms/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
     );
 
