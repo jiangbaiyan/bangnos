@@ -33,6 +33,12 @@ class BaseController extends Controller_Abstract{
     protected $params = array();
 
     /**
+     * 当前登录用户
+     * @var null
+     */
+    protected $user = null;
+
+    /**
      * 返回数据
      *
      * @var array
@@ -51,9 +57,9 @@ class BaseController extends Controller_Abstract{
      * 初始化
      */
     private function init(){
-        $user = $this->needAuth && $this->auth();
+        $this->needAuth && $this->user = $this->auth();
         $this->checkParam();//请求参数校验
-        $this->loadModel($user);//模型载入
+        $this->loadModel();//模型载入
     }
 
     /**
@@ -95,9 +101,8 @@ class BaseController extends Controller_Abstract{
 
     /**
      * 加载模型
-     * @param $user
      */
-    protected function loadModel($user){}
+    protected function loadModel(){}
 
 
 }

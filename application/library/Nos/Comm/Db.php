@@ -92,11 +92,14 @@ class Db{
             if (!$res){
                throw new CoreException(json_encode($handle->errorInfo()));
             }
+            $count = $handle->rowcount();
             if (self::$node == self::DB_NODE_MASTER_KEY){
-                return true;
+                return $count;
             }
-            $data = $handle->fetchAll(PDO::FETCH_ASSOC);
-            return $data;
+            if (!$count){
+                return array();
+            }
+            return $handle->fetchAll(PDO::FETCH_ASSOC);
         } catch (\Exception $e){
             Log::fatal('db|pdo_do_sql_failed|msg:' .  $e->getMessage() . '|sql:' . $sql . '|node:' . self::$node . '|bind:' . json_encode($bind));
             throw new CoreException('db query failed');

@@ -1,8 +1,11 @@
 <?php
 
+use Nos\Comm\Log;
 use Nos\Comm\Validator;
+use Nos\Exception\OperateFailedException;
 use Nos\Exception\ParamValidateFailedException;
 use Nos\Http\Request;
+use Nos\Http\Response;
 
 /**
  * 发布订单
@@ -12,11 +15,11 @@ use Nos\Http\Request;
  * Time: 11:27
  */
 
-class AskForHelp_ReleaseOrder extends BaseController{
+class AskForHelp_ReleaseOrderController extends BaseController{
 
     public $needAuth = true;
 
-    private $user;
+    public $user;
 
     protected function checkParam()
     {
@@ -35,13 +38,9 @@ class AskForHelp_ReleaseOrder extends BaseController{
         }
     }
 
-    protected function loadModel($user)
-    {
-        $this->user = $user;
-    }
-
     /**
      * 创建订单
+     * @throws OperateFailedException
      * @throws \Nos\Exception\CoreException
      */
     protected function indexAction()
@@ -59,7 +58,12 @@ class AskForHelp_ReleaseOrder extends BaseController{
         $data['latitude'] = $this->params['latitude'];
         $data['sender_id'] = $this->user->id;
         $orderModel = new OrderModel();
-        $orderModel->createOrder($data);
+        $rows = $orderModel->createOrder($data);
+        if (!$rows){
+            Log::fatal('ask|insert_into_orders_failed|data:' . json_encode($data));
+            throw new OperateFailedException('新订单创建失败，请重试');
+        }
+        Response::apiSuccess();
     }
 
 }

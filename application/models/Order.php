@@ -5,7 +5,7 @@ use Nos\Comm\Db;
 /**
  * 订单模型
  * Created by PhpStorm.
- * User: baiyanzzz
+ * User: baiyan
  * Date: 2018-12-14
  * Time: 11:35
  */
@@ -57,4 +57,46 @@ class OrderModel{
         $sql = "insert into {$this->table} (`" . join("`,`", $keys) . "`) values(" . join(",", $paras) . ")";
         return Db::update($sql, $vals);
     }
+
+    /**
+     * 删除订单
+     * @param bool $isSoft
+     * @param string $ext
+     * @param array $bind
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    public function deleteOrder($isSoft = false, $ext = '', $bind = array()){
+        if ($isSoft){
+            $time = date('Y-m-d H:i:s');
+            $sql = "update {$this->table} set 'deleted_at' = {$time}" . ' ' . $ext;
+        } else{
+            $sql = "delete from {$this->table}" . ' ' . $ext;
+        }
+        return Db::update($sql, $bind);
+    }
+
+    /**
+     * 获取订单
+     * @param array $select
+     * @param string $ext
+     * @param array $bind
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    public function getOrder($select = array(), $ext = '', $bind = array()){
+        if (!is_array($select)){
+            $fields = $select;
+        } else if (empty($select)){
+            $fields = '*';
+        } else{
+            $fields = implode('`, `', $select);
+        }
+        $sql = "select {$fields} from {$this->table}";
+        if (!empty($ext)){
+            $sql .= ' ' . $ext;
+        }
+        return Db::fetchAll($sql, $bind);
+    }
+
 }
