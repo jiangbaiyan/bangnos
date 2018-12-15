@@ -1,6 +1,9 @@
 <?php
 
 use Nos\Comm\Db;
+use Nos\Comm\Log;
+use Nos\Exception\CoreException;
+use Nos\Exception\OperateFailedException;
 
 /**
  * 订单模型
@@ -48,14 +51,20 @@ class OrderModel{
      * 创建一条订单
      * @param $data
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws OperateFailedException
+     * @throws CoreException
      */
     public function create($data){
         $keys = array_keys($data);
         $vals = array_values($data);
         $paras = array_fill(0, count($keys),'?');
         $sql = "insert into {$this->table} (`" . join("`,`", $keys) . "`) values(" . join(",", $paras) . ")";
-        return Db::update($sql, $vals);
+        $rows = Db::update($sql, $vals);
+        if (!$rows){
+            Log::fatal('orderModel|create_order_failed|$data:' . json_encode($data) . '|sql:' . $sql);
+            throw new OperateFailedException('订单创建失败');
+        }
+        return $rows;
     }
 
     /**
@@ -64,7 +73,8 @@ class OrderModel{
      * @param string $ext
      * @param array $bind
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws OperateFailedException
+     * @throws CoreException
      */
     public function delete($isSoft = false, $ext = '', $bind = array()){
         if ($isSoft){
@@ -73,7 +83,12 @@ class OrderModel{
         } else{
             $sql = "delete from {$this->table} " . $ext;
         }
-        return Db::update($sql, $bind);
+        $rows = Db::update($sql, $bind);
+        if (!$rows){
+            Log::fatal('orderModel|delete_order_failed|$data:'  . '|sql:' . $sql . '|bind:' . json_encode($bind));
+            throw new OperateFailedException('订单删除失败');
+        }
+        return $rows;
     }
 
     /**
@@ -82,7 +97,7 @@ class OrderModel{
      * @param string $ext
      * @param array $bind
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws CoreException
      */
     public function getOrder($select = array(), $ext = '', $bind = array()){
         if (!is_array($select)){
@@ -102,7 +117,8 @@ class OrderModel{
      * @param string $ext
      * @param array $bind
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws OperateFailedException
+     * @throws CoreException
      */
     public function update($data, $ext = '', $bind = array()){
         $keys = array_keys($data);
@@ -112,7 +128,12 @@ class OrderModel{
         }
         $keyStr = join(',', $keys);
         $sql = "update {$this->table} set {$keyStr} " . $ext;
-        return Db::update($sql, array_merge($vals, $bind));
+        $rows = Db::update($sql, array_merge($vals, $bind));
+        if (!$rows){
+            Log::fatal('orderModel|update_order_failed|$data:'  . '|sql:' . $sql . '|bind:' . json_encode($bind));
+            throw new OperateFailedException('订单更新失败');
+        }
+        return $rows;
     }
 
 

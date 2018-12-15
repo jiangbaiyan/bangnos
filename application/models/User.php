@@ -7,6 +7,9 @@
  */
 
 use Nos\Comm\Db;
+use Nos\Comm\Log;
+use Nos\Exception\OperateFailedException;
+use Nos\Exception\CoreException;
 
 class UserModel{
 
@@ -17,7 +20,7 @@ class UserModel{
      * @param string $ext
      * @param array $bind
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws CoreException
      */
     public function getUser($select = array(), $ext = '', $bind = array()){
         if (!is_array($select)){
@@ -36,7 +39,7 @@ class UserModel{
      * @param $id
      * @param array $select
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws CoreException
      */
     public function getUserById($id, $select = array()){
         $data = $this->getUser($select, 'where id = ?', array($id));
@@ -48,7 +51,7 @@ class UserModel{
      * @param $uid
      * @param array $select
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws CoreException
      */
     public function getUserByUid($uid, $select = array()){
         $data = $this->getUser($select, 'where uid = ?', array($uid));
@@ -59,14 +62,20 @@ class UserModel{
      * 创建用户
      * @param $data
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws OperateFailedException
+     * @throws CoreException
      */
     public function create($data){
         $keys = array_keys($data);
         $vals = array_values($data);
         $paras = array_fill(0, count($keys), '?');
         $sql = "insert into {$this->table}(`" . join("`,`", $keys) . "`) values(" . join(",", $paras) . ")";
-        return Db::update($sql, $vals);
+        $rows = Db::update($sql, $vals);
+        if (!$rows){
+            Log::fatal('userModel|create_user_failed|$data:' . json_encode($data) . '|sql:' . $sql);
+            throw new OperateFailedException('用户创建失败');
+        }
+        return $rows;
     }
 
     /**
@@ -75,7 +84,8 @@ class UserModel{
      * @param string $ext
      * @param array $bind
      * @return mixed
-     * @throws \Nos\Exception\CoreException
+     * @throws OperateFailedException
+     * @throws CoreException
      */
     public function update($data, $ext = '', $bind = array()){
         $keys = array_keys($data);
@@ -85,6 +95,11 @@ class UserModel{
         }
         $keyStr = join(',', $keys);
         $sql = "update {$this->table} set {$keyStr} " . $ext;
-        return Db::update($sql, array_merge($vals, $bind));
+        $rows = Db::update($sql, array_merge($vals, $bind));
+        if (!$rows){
+            Log::fatal('userModel|update_user_failed|$data:'  . '|sql:' . $sql . '|bind:' . json_encode($bind));
+            throw new OperateFailedException('用户更新失败');
+        }
+        return $rows;
     }
 }
