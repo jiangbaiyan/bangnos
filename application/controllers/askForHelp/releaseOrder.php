@@ -21,13 +21,15 @@ class AskForHelp_ReleaseOrderController extends BaseController{
 
     public $user;
 
-    protected function checkParam()
+    private $orderModel;
+
+    public function checkParam()
     {
         Validator::make($this->params = Request::all(),array(
             'title' => 'required',
             'content' => 'required',
-            'beginTime' => 'required|date',
-            'endTime' => 'required|date',
+            'beginTime' => 'required|dateTime',
+            'endTime' => 'required|dateTime',
             'type' => 'required',
             'price' => 'required',
             'longitude' => 'required',
@@ -38,18 +40,18 @@ class AskForHelp_ReleaseOrderController extends BaseController{
         }
     }
 
-    /**
-     * 创建订单
-     * @throws OperateFailedException
-     * @throws \Nos\Exception\CoreException
-     */
-    protected function indexAction()
+    public function loadModel()
+    {
+        $this->orderModel = new OrderModel();
+    }
+
+    public function indexAction()
     {
         $data = array();
         $data['title'] = $this->params['title'];
         $data['content'] = $this->params['content'];
-        $data['begin_time'] = $this->params['begin_time'];
-        $data['end_time'] = $this->params['end_time'];
+        $data['begin_time'] = $this->params['beginTime'];
+        $data['end_time'] = $this->params['endTime'];
         $data['type'] = $this->params['type'];
         $data['status'] = OrderModel::STATUS_RELEASED;
         $data['price'] = $this->params['price'];
@@ -57,8 +59,10 @@ class AskForHelp_ReleaseOrderController extends BaseController{
         $data['longitude'] = $this->params['longitude'];
         $data['latitude'] = $this->params['latitude'];
         $data['sender_id'] = $this->user->id;
-        $orderModel = new OrderModel();
-        $rows = $orderModel->create($data);
+        $time = date('Y-m-d H:i:s');
+        $data['created_at'] = $time;
+        $data['updated_at'] = $time;
+        $rows = $this->orderModel->create($data);
         if (!$rows){
             Log::fatal('ask|insert_into_orders_failed|data:' . json_encode($data));
             throw new OperateFailedException('新订单创建失败，请重试');

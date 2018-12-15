@@ -11,7 +11,7 @@ namespace Nos\Http;
 
 use Nos\Comm\Log;
 use Nos\Exception\OperateFailedException;
-use Yaf\Registry;
+use Yaf\Config\Ini;
 use Yaf\Request\Http;
 
 class Request{
@@ -22,6 +22,12 @@ class Request{
      * @var Http
      */
     private static $request;
+
+    /**
+     * 请求协议
+     * @var
+     */
+    private static $schema;
 
     /**
      * 单例获取请求实例，避免请求期间重复实例化
@@ -99,8 +105,13 @@ class Request{
      * @return string
      */
     public static function getFullUrl(){
-        $schema = Registry::get('config')['schema'];
-        return $schema . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+        $schema = self::$schema;
+        if (!isset($schema)){
+            $config = new Ini(APP_PATH . '/config/application.ini', ini_get('yaf.environ'));
+            $config = $config->toArray();
+            self::$schema = $config['schema'];
+        }
+        return self::$schema . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
     }
 
     /**
@@ -121,9 +132,9 @@ class Request{
      * @param $type
      * @param $url
      * @param array $postData
+     * @param array $options
      * @param int $retry
      * @param int $timeout
-     * @param array $options
      * @return bool|string
      * @throws OperateFailedException
      */
@@ -149,11 +160,10 @@ class Request{
                 }
             }
             if ($i == $retry){
-                Log::fatal('curl|send_request_error|url:' . $url . '|type:' . $type . '|params:' .$postData . '|retry:' . $retry . '|curl_error:' . json_encode(curl_error($ch)));
+                Log::fatal('curl|send_request_error|url:' . $url . '|type:' . $type . '|postData:' .$postData . '|retry:' . $retry . '|curl_error:' . json_encode(curl_error($ch)));
                 throw new OperateFailedException('发送请求失败，请重试');
             }
         }
-        Log::fatal(json_encode('curl|send_request_error|url:' . $url . '|type:' . $type . '|params:' .json_encode($postData) . '|retry:' . $retry . '|curl_error:' . json_encode(curl_error($ch))));
         curl_close($ch);
         return $res;
     }

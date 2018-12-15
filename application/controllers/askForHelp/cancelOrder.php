@@ -2,6 +2,7 @@
 
 use Nos\Comm\Log;
 use Nos\Comm\Validator;
+use Nos\Exception\CoreException;
 use Nos\Exception\OperateFailedException;
 use Nos\Http\Request;
 use Nos\Http\Response;
@@ -13,34 +14,35 @@ use Nos\Http\Response;
  * Time: 13:50
  */
 
-class AskForHelp_CancelOrder extends BaseController{
+class AskForHelp_CancelOrderController extends BaseController{
 
     public $needAuth = true;
 
     public $user;
+    
+    private $orderModel;
 
-    protected function checkParam()
+    public function checkParam()
     {
         Validator::make($this->params = Request::all(), array(
             'id' => 'required'
         ));
     }
 
-    /**
-     * 取消订单
-     * @throws OperateFailedException
-     * @throws \Nos\Exception\CoreException
-     */
-    protected function indexAction()
+    public function loadModel()
+    {
+        $this->orderModel = new OrderModel();
+    }
+
+    public function indexAction()
     {
         $id = $this->params['id'];
-        $order = new OrderModel();
-        $rows = $order->delete(true, 'where id = ?', array($id));
-        $rows = $order->update();
-        if (!$rows){
-            Log::fatal('ask|cancel_order_failed|id:' , $id);
-            throw new OperateFailedException('订单不存在或取消失败');
-        }
+        $ext = 'where id = ?';
+        $this->orderModel->delete(true, $ext, array($id));
+        $this->orderModel->update(array(
+            'status' => OrderModel::STATUS_CANCELED,
+            'updated_at' => date('Y-m-d H:i:s')
+        ), $ext, array($id));
         Response::apiSuccess();
     }
 }

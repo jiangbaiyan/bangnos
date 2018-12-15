@@ -66,7 +66,6 @@ class BaseController extends Controller_Abstract{
     /**
      * 用户授权
      * @return object
-     * @throws UnauthorizedException
      */
     protected function auth(){
         $frontToken = Request::header('Authorization');
@@ -78,10 +77,10 @@ class BaseController extends Controller_Abstract{
             $key = Config::get('common.JWT');
             $user = JWT::decode($frontToken, $key ,['HS256']);
         }catch (\Exception $e){
-            Log::notice('auth|decode_token_failed|msg:' . $e->getMessage() . 'frontToken:'. $frontToken);
+            Log::notice('auth|decode_token_failed|msg:' . $e->getMessage() . '|frontToken:'. $frontToken);
             Response::apiUnauthorized();
         }
-        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX, $this->user->uid);
+        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX, $user->uid);
         $token = Redis::get($redisKey);//查redis里token，比较
         if ($frontToken !== $token) {
             Log::notice('auth|front_token_not_equals_redis_token|front_token:' . $frontToken . '|redis_token:' . $token);
