@@ -1,5 +1,6 @@
 <?php
 
+use Firebase\JWT\JWT;
 use Nos\Comm\Config;
 use Nos\Comm\Log;
 use Nos\Comm\Validator;
@@ -7,6 +8,8 @@ use Nos\Exception\OperateFailedException;
 use Nos\Http\Request;
 use Nos\Http\Response;
 use Des\Des;
+use Nos\Comm\Redis;
+use Wx\Wx;
 
 
 /**
@@ -18,7 +21,7 @@ use Des\Des;
 
 class Common_CasLoginController extends BaseController{
 
-    protected $needAuth = false;
+    public $needAuth = false;
 
     const LOGIN_SERVER = 'http://cas.hdu.edu.cn/cas/login';
 
@@ -27,7 +30,6 @@ class Common_CasLoginController extends BaseController{
     const REDIS_TOKEN_PREFIX = 'bang_token_%s';
 
     private $thisUrl;
-
 
     public function checkParam()
     {
@@ -41,7 +43,7 @@ class Common_CasLoginController extends BaseController{
 
     public function indexAction()
     {
-        $this->thisUrl = Config::get('common.host') . '/api/v1/common/casLogin';
+        //$this->thisUrl = Config::get('common.HOST') . '/api/v1/common/casLogin';
         if (!empty($_REQUEST["ticket"])) {
             //获取登录后的返回信息
             try {//认证ticket
@@ -109,11 +111,12 @@ class Common_CasLoginController extends BaseController{
                 'phone' => 'required',
                 'code' => 'required',
             ]);
-            $ticket = $this->getTicket($params['uid'],$params['password']);
-            exit;
-            $openid = WxService::getOpenid($params['code']);
-            $avatar = !empty($params['avatar']) ? $params['avatar'] : '';
-            return redirect($this->thisUrl . '?ticket=' . $ticket . '&phone=' . $params['phone'] . '&openid=' . $openid . '&avatar=' . $avatar);
+            //$params['openid'] = Wx::getOpenid($params['code']);
+            unset($params['code']);
+            $user = $this->getLatestUser($params);
+            var_dump($user);exit;
+            $token = $this->setToken($user);
+            Response::apiSuccess($token);
         }
     }
 
@@ -168,5 +171,37 @@ class Common_CasLoginController extends BaseController{
             throw new OperateFailedException('login|get_ticket_from_cas_failed|req:' . json_encode($res));
         }
         return $matches[1];
+    }
+
+    /**
+     * 设置token
+     * @param $data
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    private function setToken($data){
+        $key = Config::get('common.JWT');
+        $token = JWT::encode($data, $key);
+        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX, $data['uid']);
+        Redis::set($redisKey, $token, 2678400);
+        return $token;
+    }
+
+    /**
+     * 不存在则创建，存在则更新，返回最新的用户模型
+     * @param $data
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    private function getLatestUser($data){
+        $userModel = new UserModel();
+        $user = $userModel->getUserByUid($data['uid']);
+        if (!$user){
+            $userModel->create($data);
+        } else{
+            $userModel->update($data);
+            $user = $userModel->getUserByUid($data['uid']);
+        }
+        return $user;
     }
 }

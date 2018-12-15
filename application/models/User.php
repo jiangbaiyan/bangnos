@@ -27,11 +27,64 @@ class UserModel{
         } else{
             $fields = implode('`, `', $select);
         }
-        $sql = "select {$fields} from {$this->table}";
+        $sql = "select {$fields} from {$this->table} ";
         if (!empty($ext)){
             $sql .= ' ' . $ext;
         }
         return Db::fetchAll($sql, $bind);
     }
 
+    /**
+     * 通过id获取用户
+     * @param $id
+     * @param array $select
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    public function getUserById($id, $select = array()){
+        return $this->getUser($select, 'where id = ?', array($id));
+    }
+
+    /**
+     * 通过uid获取用户
+     * @param $uid
+     * @param array $select
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    public function getUserByUid($uid, $select = array()){
+        return $this->getUser($select, 'where uid = ?', array($uid));
+    }
+
+    /**
+     * 创建用户
+     * @param $data
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    public function create($data){
+        $keys = array_keys($data);
+        $vals = array_values($data);
+        $paras = array_fill(0, count($keys), '?');
+        $sql = "insert into {$this->table}(`" . join("`,`", $keys) . "`) values(" . join(",", $paras) . ")";
+        return Db::update($sql, $vals);
+    }
+
+    /**
+     * 更新用户
+     * @param $data
+     * @param string $ext
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    public function update($data, $ext = ''){
+        $keys = array_keys($data);
+        $vals = array_values($data);
+        foreach ($keys as &$key){
+            $key .= '=?';
+        }
+        $keyStr = join(',', $keys);
+        $sql = "update {$this->table} set {$keyStr} " . $ext;
+        return Db::update($sql, $vals);
+    }
 }

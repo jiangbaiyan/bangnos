@@ -53,7 +53,7 @@ class OrderModel{
     public function create($data){
         $keys = array_keys($data);
         $vals = array_values($data);
-        $paras = array_fill(0, count($keys),"?");
+        $paras = array_fill(0, count($keys),'?');
         $sql = "insert into {$this->table} (`" . join("`,`", $keys) . "`) values(" . join(",", $paras) . ")";
         return Db::update($sql, $vals);
     }
@@ -69,7 +69,7 @@ class OrderModel{
     public function delete($isSoft = false, $ext = '', $bind = array()){
         if ($isSoft){
             $time = date('Y-m-d H:i:s');
-            $sql = "update {$this->table} set 'deleted_at' = {$time}" . ' ' . $ext;
+            $sql = "update {$this->table} set 'deleted_at' = {$time} " . ' ' . $ext;
         } else{
             $sql = "delete from {$this->table}" . ' ' . $ext;
         }
@@ -84,7 +84,7 @@ class OrderModel{
      * @return mixed
      * @throws \Nos\Exception\CoreException
      */
-    public function get($select = array(), $ext = '', $bind = array()){
+    public function getOrder($select = array(), $ext = '', $bind = array()){
         if (!is_array($select)){
             $fields = $select;
         } else if (empty($select)){
@@ -92,16 +92,30 @@ class OrderModel{
         } else{
             $fields = implode('`, `', $select);
         }
-        $sql = "select {$fields} from {$this->table}";
+        $sql = "select {$fields} from {$this->table} ";
         if (!empty($ext)){
             $sql .= ' ' . $ext;
         }
         return Db::fetchAll($sql, $bind);
     }
 
-    public function update($fields = array(), $ext = '', $bind = array()){
-
-
+    /**
+     * 更新订单
+     * @param $data
+     * @param string $ext
+     * @return mixed
+     * @throws \Nos\Exception\CoreException
+     */
+    public function update($data, $ext = ''){
+        $keys = array_keys($data);
+        $vals = array_values($data);
+        foreach ($keys as &$key){
+            $key .= '=?';
+        }
+        $keyStr = join(',', $keys);
+        $sql = "update {$this->table} set {$keyStr} " . $ext;
+        return Db::update($sql, $vals);
     }
+
 
 }

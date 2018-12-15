@@ -19,6 +19,7 @@ use Nos\Comm\Log;
 use Nos\Exception\UnauthorizedException;
 use Nos\Http\Request;
 use Nos\Comm\Redis;
+use Nos\Http\Response;
 use Yaf\Controller_Abstract;
 
 class BaseController extends Controller_Abstract{
@@ -50,7 +51,7 @@ class BaseController extends Controller_Abstract{
      *
      * @var bool
      */
-    protected $needAuth = true;//是否需要校验
+    protected $needAuth;//是否需要校验
 
 
     /**
@@ -71,20 +72,20 @@ class BaseController extends Controller_Abstract{
         $frontToken = Request::header('Authorization');
         if (empty($frontToken)) {
             Log::notice('auth|header_token_empty');
-            throw new UnAuthorizedException();
+            Response::apiUnauthorized();
         }
         try{
-            $key = Config::get('common.jwt');
+            $key = Config::get('common.JWT');
             $user = JWT::decode($frontToken, $key ,['HS256']);
         }catch (\Exception $e){
             Log::notice('auth|decode_token_failed|msg:' . $e->getMessage() . 'frontToken:'. $frontToken);
-            throw new UnAuthorizedException();
+            Response::apiUnauthorized();
         }
-        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX, $user->uid);
+        $redisKey = sprintf(self::REDIS_TOKEN_PREFIX, $this->user->uid);
         $token = Redis::get($redisKey);//查redis里token，比较
         if ($frontToken !== $token) {
             Log::notice('auth|front_token_not_equals_redis_token|front_token:' . $frontToken . '|redis_token:' . $token);
-            throw new UnAuthorizedException();
+            Response::apiUnauthorized();
         }
         return $user;
     }

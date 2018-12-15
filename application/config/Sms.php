@@ -9,7 +9,7 @@
 
 return array(
 
-    'aliSms' => array(
+    'ALI_SMS' => array(
         'ACCESS_KEY_ID'     => 'LTAIFUVgskph3h00',
         'ACCESS_KEY_SECRET' => 'eq1CrL826196CvOm65wc7n5BPN3PZ9',
         'SIGN_NAME'         => '帮帮吧',

@@ -32,7 +32,7 @@ class Sms{
     private static function init()
     {
         if (empty(self::$config)) {
-            self::$config = Config::get('sms.aliSms');
+            self::$config = Config::get('sms.ALI_SMS');
         }
         if (!self::$client instanceof Client) {
             $params = array(
