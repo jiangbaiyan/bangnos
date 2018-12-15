@@ -110,8 +110,24 @@ class OrderModel{
         } else{
             $fields = implode('`, `', $select);
         }
-        $sql = "select `{$fields}` from {$this->table} " . $ext;
+        if ($fields == '*'){
+            $sql = "select * from {$this->table} " . $ext;
+        } else{
+            $sql = "select `{$fields}` from {$this->table} " . $ext;
+        }
         return Db::fetchAll($sql, $bind);
+    }
+
+    /**
+     * 根据id获取订单
+     * @param $id
+     * @param array $select
+     * @return array
+     * @throws CoreException
+     */
+    public function getOrderById($id, $select = array()){
+        $data = $this->getOrder($select, 'where id = ?', array($id));
+        return isset($data[0]) ? $data[0] : array();
     }
 
     /**

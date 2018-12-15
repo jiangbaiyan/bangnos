@@ -1,9 +1,6 @@
 <?php
 
-use Nos\Comm\Log;
 use Nos\Comm\Validator;
-use Nos\Exception\CoreException;
-use Nos\Exception\OperateFailedException;
 use Nos\Http\Request;
 use Nos\Http\Response;
 

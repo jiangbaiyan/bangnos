@@ -26,11 +26,15 @@ class UserModel{
         if (!is_array($select)){
             $fields = $select;
         } else if (empty($select)){
-           $fields = '*';
+            $fields = '*';
         } else{
             $fields = implode('`, `', $select);
         }
-        $sql = "select {$fields} from {$this->table} " . $ext;
+        if ($fields == '*'){
+            $sql = "select * from {$this->table} " . $ext;
+        } else{
+            $sql = "select `{$fields}` from {$this->table} " . $ext;
+        }
         return Db::fetchAll($sql, $bind);
     }
 

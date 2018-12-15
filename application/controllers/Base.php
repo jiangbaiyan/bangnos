@@ -16,13 +16,12 @@
 use Firebase\JWT\JWT;
 use Nos\Comm\Config;
 use Nos\Comm\Log;
-use Nos\Exception\UnauthorizedException;
 use Nos\Http\Request;
 use Nos\Comm\Redis;
 use Nos\Http\Response;
 use Yaf\Controller_Abstract;
 
-class BaseController extends Controller_Abstract{
+abstract class BaseController extends Controller_Abstract{
 
     const REDIS_TOKEN_PREFIX = 'bang_token_%s';
 
@@ -92,12 +91,12 @@ class BaseController extends Controller_Abstract{
     /**
      * 参数校验
      */
-    protected function checkParam(){}
+    abstract protected function checkParam();
 
     /**
      * 业务逻辑
      */
-    protected function indexAction(){}
+    abstract protected function indexAction();
 
     /**
      * 加载模型
