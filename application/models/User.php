@@ -27,10 +27,7 @@ class UserModel{
         } else{
             $fields = implode('`, `', $select);
         }
-        $sql = "select {$fields} from {$this->table} ";
-        if (!empty($ext)){
-            $sql .= ' ' . $ext;
-        }
+        $sql = "select {$fields} from {$this->table} " . $ext;
         return Db::fetchAll($sql, $bind);
     }
 
@@ -42,7 +39,8 @@ class UserModel{
      * @throws \Nos\Exception\CoreException
      */
     public function getUserById($id, $select = array()){
-        return $this->getUser($select, 'where id = ?', array($id));
+        $data = $this->getUser($select, 'where id = ?', array($id));
+        return isset($data[0]) ? $data[0] : array();
     }
 
     /**
@@ -53,7 +51,8 @@ class UserModel{
      * @throws \Nos\Exception\CoreException
      */
     public function getUserByUid($uid, $select = array()){
-        return $this->getUser($select, 'where uid = ?', array($uid));
+        $data = $this->getUser($select, 'where uid = ?', array($uid));
+        return isset($data[0]) ? $data[0] : array();
     }
 
     /**
@@ -74,10 +73,11 @@ class UserModel{
      * 更新用户
      * @param $data
      * @param string $ext
+     * @param array $bind
      * @return mixed
      * @throws \Nos\Exception\CoreException
      */
-    public function update($data, $ext = ''){
+    public function update($data, $ext = '', $bind = array()){
         $keys = array_keys($data);
         $vals = array_values($data);
         foreach ($keys as &$key){
@@ -85,6 +85,6 @@ class UserModel{
         }
         $keyStr = join(',', $keys);
         $sql = "update {$this->table} set {$keyStr} " . $ext;
-        return Db::update($sql, $vals);
+        return Db::update($sql, array_merge($vals, $bind));
     }
 }

@@ -114,7 +114,6 @@ class Common_CasLoginController extends BaseController{
             //$params['openid'] = Wx::getOpenid($params['code']);
             unset($params['code']);
             $user = $this->getLatestUser($params);
-            var_dump($user);exit;
             $token = $this->setToken($user);
             Response::apiSuccess($token);
         }
@@ -196,10 +195,11 @@ class Common_CasLoginController extends BaseController{
     private function getLatestUser($data){
         $userModel = new UserModel();
         $user = $userModel->getUserByUid($data['uid']);
+        return $user;
         if (!$user){
             $userModel->create($data);
         } else{
-            $userModel->update($data);
+            $userModel->update($data, 'where uid = ?', $data['uid']);
             $user = $userModel->getUserByUid($data['uid']);
         }
         return $user;

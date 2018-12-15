@@ -69,9 +69,9 @@ class OrderModel{
     public function delete($isSoft = false, $ext = '', $bind = array()){
         if ($isSoft){
             $time = date('Y-m-d H:i:s');
-            $sql = "update {$this->table} set 'deleted_at' = {$time} " . ' ' . $ext;
+            $sql = "update {$this->table} set 'deleted_at' = {$time} " . $ext;
         } else{
-            $sql = "delete from {$this->table}" . ' ' . $ext;
+            $sql = "delete from {$this->table} " . $ext;
         }
         return Db::update($sql, $bind);
     }
@@ -92,10 +92,7 @@ class OrderModel{
         } else{
             $fields = implode('`, `', $select);
         }
-        $sql = "select {$fields} from {$this->table} ";
-        if (!empty($ext)){
-            $sql .= ' ' . $ext;
-        }
+        $sql = "select {$fields} from {$this->table} " . $ext;
         return Db::fetchAll($sql, $bind);
     }
 
@@ -103,10 +100,11 @@ class OrderModel{
      * 更新订单
      * @param $data
      * @param string $ext
+     * @param array $bind
      * @return mixed
      * @throws \Nos\Exception\CoreException
      */
-    public function update($data, $ext = ''){
+    public function update($data, $ext = '', $bind = array()){
         $keys = array_keys($data);
         $vals = array_values($data);
         foreach ($keys as &$key){
@@ -114,7 +112,7 @@ class OrderModel{
         }
         $keyStr = join(',', $keys);
         $sql = "update {$this->table} set {$keyStr} " . $ext;
-        return Db::update($sql, $vals);
+        return Db::update($sql, array_merge($vals, $bind));
     }
 
 
