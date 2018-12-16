@@ -1,5 +1,6 @@
 <?php
 /**
+ * 微信工具类
  * Created by PhpStorm.
  * User: baiyan
  * Date: 2018-12-15
@@ -12,8 +13,11 @@ use Nos\Comm\Config;
 use Nos\Comm\Log;
 use Nos\Exception\OperateFailedException;
 use Nos\Http\Request;
+use Yansongda\Pay\Pay;
 
 class Wx{
+
+
 
     /**
      * 获取openid
@@ -34,5 +38,15 @@ class Wx{
             throw new OperateFailedException('获取微信授权失败');
         }
         return $res['openid'];
+    }
+
+    /**
+     * 获取支付实例
+     * @return \Yansongda\Pay\Gateways\Wechat
+     * @throws \Nos\Exception\CoreException
+     */
+    public static function getWxPayApp(){
+        $config = Config::get('wx.PAY');
+        return Pay::wechat($config);
     }
 }

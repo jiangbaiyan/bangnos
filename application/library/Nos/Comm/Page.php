@@ -21,6 +21,9 @@ class Page{
      * @return array
      */
     public static function paginate($count, $curPage, $pageSize){
+        !is_int($count) && $count = intval($count);
+        !is_int($curPage) && $curPage = intval($curPage);
+        !is_int($pageSize) && $pageSize = intval($pageSize);
         $baseUrl = Request::getFullUrl();
         if (strpos($baseUrl, 'page=') === false){
             if (strpos($baseUrl, '?') === false){
@@ -41,7 +44,6 @@ class Page{
         $lastPageUrl = preg_replace($pattern, 'page=' . $totalPage, $baseUrl);
         $nextPageUrl =  $curPage == $totalPage ? '' : preg_replace($pattern, 'page=' .($curPage + 1), $baseUrl);
         $prevPageUrl =  $curPage ==  1 ? '' : preg_replace($pattern, 'page=' .($curPage - 1), $baseUrl);
-
         return array(
             'first_page_url' => $firstPageUrl,
             'last_page_url' => $lastPageUrl,
@@ -60,6 +62,8 @@ class Page{
      * @return float|int
      */
     public static function getLimitData($curPage, $pageSize){
+        !is_int($curPage) && $curPage = intval($curPage);
+        !is_int($pageSize) && $pageSize = intval($pageSize);
         $offset = empty($curPage) ? 0 : ($curPage - 1) * $pageSize;
         return $offset;
     }

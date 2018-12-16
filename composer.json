@@ -25,7 +25,8 @@
   },
   "require": {
       "flc/dysms": "^1.0",
-      "firebase/php-jwt": "^5.0"
+      "firebase/php-jwt": "^5.0",
+    "yansongda/pay": "^2.5"
   },
   "scripts": {
     "post-autoload-dump": [

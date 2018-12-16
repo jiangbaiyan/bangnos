@@ -16,6 +16,8 @@ use Nos\Http\Response;
 
 class Order_CommentOrderController extends BaseController{
 
+    public $needAuth = true;
+
     private $orderModel;
 
     private $userModel;

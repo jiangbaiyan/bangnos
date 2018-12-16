@@ -118,6 +118,19 @@ class OrderModel{
     }
 
     /**
+     * 获取订单数据总条数
+     * @param string $ext
+     * @param array $bind
+     * @return mixed
+     * @throws CoreException
+     */
+    public function getOrderNum($ext = '', $bind = array()){
+        $sql = "select count(*) as count from {$this->table} " . $ext;
+        $data = Db::fetchAll($sql, $bind);
+        return isset($data[0]['count']) ? $data[0]['count'] : array();
+    }
+
+    /**
      * 根据id获取订单
      * @param $id
      * @param array $select
