@@ -184,6 +184,10 @@ class OrderModel{
      */
     public function getDistance($lng1, $lat1, $lng2, $lat2)
     {
+        $lng1 = intval($lng1);
+        $lat1 = intval($lat1);
+        $lng2 = intval($lng2);
+        $lat2 = intval($lat2);
         $radLat1 = deg2rad($lat1); //deg2rad()函数将角度转换为弧度
         $radLat2 = deg2rad($lat2);
         $radLng1 = deg2rad($lng1);
