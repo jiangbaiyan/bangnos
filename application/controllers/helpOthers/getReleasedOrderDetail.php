@@ -5,6 +5,7 @@ use Nos\Http\Request;
 use Nos\Http\Response;
 
 /**
+ * 获取订单详情
  * Created by PhpStorm.
  * User: baiyan
  * Date: 2018-12-14
@@ -12,6 +13,8 @@ use Nos\Http\Response;
  */
 
 class HelpOthers_GetReleasedOrderDetailController extends BaseController{
+
+    public $needAuth = true;
 
     private $orderModel;
 

@@ -81,7 +81,6 @@ class OrderModel{
             $time = date('Y-m-d H:i:s');
             $this->update(array(
                 'deleted_at' => $time,
-                'updated_at' => $time
             ), $ext, $bind);
         } else{
             $sql = "delete from {$this->table} " . $ext;
@@ -140,6 +139,13 @@ class OrderModel{
      * @throws CoreException
      */
     public function update($data, $ext = '', $bind = array()){
+        if (!is_array($bind)){
+            $bind = array($bind);
+        }
+        $now = date('Y-m-d H:i:s');
+        $data = array_merge($data, array(
+            'updated_at' => $now
+        ));
         $keys = array_keys($data);
         $vals = array_values($data);
         foreach ($keys as &$key){
@@ -147,7 +153,6 @@ class OrderModel{
         }
         $keyStr = join(',', $keys);
         $sql = "update {$this->table} set {$keyStr} " . $ext;
-        var_dump($sql);
         $rows = Db::update($sql, array_merge($vals, $bind));
         if (!$rows){
             Log::fatal('orderModel|update_order_failed|$data:'  . '|sql:' . $sql . '|bind:' . json_encode($bind));

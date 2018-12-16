@@ -6,6 +6,7 @@ use Nos\Http\Request;
 use Nos\Http\Response;
 
 /**
+ * 获取订单列表
  * Created by PhpStorm.
  * User: baiyan
  * Date: 2018-12-14
@@ -13,6 +14,8 @@ use Nos\Http\Response;
  */
 
 class HelpOthers_GetReleasedOrderListController extends BaseController{
+
+    public $needAuth = true;
 
     private $orderModel;
 
@@ -26,7 +29,7 @@ class HelpOthers_GetReleasedOrderListController extends BaseController{
         $this->params['size'] = isset($this->params['size']) ? $this->params['size'] : 10;
     }
 
-    protected function loadModel()
+    public function loadModel()
     {
         $this->orderModel = new OrderModel();
     }

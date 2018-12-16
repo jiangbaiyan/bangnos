@@ -38,7 +38,6 @@ class AskForHelp_CancelOrderController extends BaseController{
         $this->orderModel->delete(true, $ext, array($id));
         $this->orderModel->update(array(
             'status' => OrderModel::STATUS_CANCELED,
-            'updated_at' => date('Y-m-d H:i:s')
         ), $ext, array($id));
         Response::apiSuccess();
     }

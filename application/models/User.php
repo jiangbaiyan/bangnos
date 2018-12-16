@@ -92,6 +92,13 @@ class UserModel{
      * @throws CoreException
      */
     public function update($data, $ext = '', $bind = array()){
+        if (!is_array($bind)){
+            $bind = array($bind);
+        }
+        $now = date('Y-m-d H:i:s');
+        $data = array_merge($data, array(
+            'updated_at' => $now
+        ));
         $keys = array_keys($data);
         $vals = array_values($data);
         foreach ($keys as &$key){
