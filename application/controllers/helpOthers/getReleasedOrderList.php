@@ -48,7 +48,7 @@ class HelpOthers_GetReleasedOrderListController extends BaseController{
             $ext = "where status = ? and type = ? and begin_time < ? and end_time > ? order by created_at desc limit {$offset},{$size}";
             $bind = array(OrderModel::STATUS_RELEASED, $this->params['type'], $now, $now);
         }
-        $orders = $this->orderModel->getOrder($select, $ext ,$bind);
+        $orders = $this->orderModel->getList($select, $ext ,$bind);
         if (empty($orders)){
             Response::apiSuccess();
         }

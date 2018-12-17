@@ -37,7 +37,7 @@ class HelpOthers_ReceiveOrderController extends BaseController{
 
     public function indexAction()
     {
-        $order = $this->orderModel->getOrderById($this->params['id']);
+        $order = $this->orderModel->getById($this->params['id']);
         if ($order['status'] != OrderModel::STATUS_RELEASED){
             Log::notice('ho|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException('错误的订单状态');

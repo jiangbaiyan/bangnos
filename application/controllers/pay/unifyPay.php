@@ -44,9 +44,9 @@ class Pay_UnifyPayController extends BaseController{
      */
     public function indexAction()
     {
-        $order = $this->orderModel->getOrderById($this->params['id']);
+        $order = $this->orderModel->getById($this->params['id']);
         if (empty($order['uuid']) || empty($order['price']) || empty($order['title']) || empty($this->user->openid)){
-            Log::notice('wxpay|unify_pay_params_error' . json_encode($params));
+            Log::notice('wxpay|unify_pay_params_error');
             throw new OperateFailedException('统一下单参数不正确');
         }
         $params = array(
@@ -56,14 +56,14 @@ class Pay_UnifyPayController extends BaseController{
             'openid' => $this->user->openid
         );
         $app = Wx::getWxPayApp();
-        Logger::notice('wxpay|unify_pay_params:' . json_encode($params));
+        Log::notice('wxpay|unify_pay_params:' . json_encode($params));
         try{
             $res = $app->miniapp($params);
         } catch (\Exception $e){
             Log::fatal('wxpay|error:' . json_encode($e->getMessage()));
             throw new OperateFailedException('调用支付接口异常');
         }
-        Logger::notice('wxpay|unify_pay_res:|res:' . json_encode($res));
+        Log::notice('wxpay|unify_pay_res:|res:' . json_encode($res));
         Response::apiSuccess($res);
     }
 }

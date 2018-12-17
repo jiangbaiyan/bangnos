@@ -39,7 +39,7 @@ class HelpOthers_FinishOrderController extends BaseController{
 
     public function indexAction()
     {
-        $order = $this->orderModel->getOrderById($this->params['id']);
+        $order = $this->orderModel->getById($this->params['id']);
         if ($order['status'] != OrderModel::STATUS_RUNNING){
             Log::notice('ho|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException('错误的订单状态');
@@ -48,11 +48,11 @@ class HelpOthers_FinishOrderController extends BaseController{
             Log::notice('ho|sender_id_not_eq_uid|msg:' . json_encode($order));
             throw new OperateFailedException('您不能完成其他人的订单');
         }
-        $sender = $this->userModel->getUserById($order['sender_id']);
+        $sender = $this->userModel->getById($order['sender_id']);
         $this->userModel->update(array(
             'point' => $sender['point'] + OrderModel::AWARD_SENDER,
         ), 'where id = ?', array($sender['id']));
-        $receiver = $this->userModel->getUserById($order['receiver_id']);
+        $receiver = $this->userModel->getById($order['receiver_id']);
         $this->userModel->update(array(
             'point' => $receiver['point'] + OrderModel::AWARD_RECEIVER,
         ), 'where id = ?', array($receiver['id']));

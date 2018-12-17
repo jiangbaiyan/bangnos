@@ -39,7 +39,7 @@ class Order_CommentOrderController extends BaseController{
 
     public function indexAction()
     {
-        $order = $this->orderModel->getOrderById($this->params['id']);
+        $order = $this->orderModel->getById($this->params['id']);
         if ($order['status'] != OrderModel::STATUS_WAITING_COMMENT){
             Log::notice('order|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException('错误的订单状态');
@@ -51,7 +51,7 @@ class Order_CommentOrderController extends BaseController{
         $this->orderModel->update(array(
             'status' => OrderModel::STATUS_FINISHED
         ), 'where id = ?', array($this->params['id']));
-        $receiver = $this->userModel->getUserById($order['receiver_id']);
+        $receiver = $this->userModel->getById($order['receiver_id']);
         $this->userModel->update(array(
             'point' => $receiver['point'] + $this->params['star'],
         ), 'where id = ?', array($order['receiver_id']));

@@ -35,8 +35,8 @@ class HelpOthers_GetReleasedOrderDetailController extends BaseController{
 
     public function indexAction()
     {
-        $order = $this->orderModel->getOrderById($this->params['id']);
-        $sender = $this->userModel->getUserById($order['sender_id']);
+        $order = $this->orderModel->getById($this->params['id']);
+        $sender = $this->userModel->getById($order['sender_id']);
         $data  = array_merge($order, array('sender' => $sender));
         Response::apiSuccess($data);
     }

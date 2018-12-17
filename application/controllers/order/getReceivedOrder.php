@@ -41,13 +41,13 @@ class Order_GetReceivedOrderController extends BaseController
         $select = array('id', 'title', 'status', 'content', 'price', 'updated_at', 'sender_id');
         $offset = Page::getLimitData($this->params['page'], $size);
         $ext1 = "where sender_id = ? and `deleted_at` is null order by updated_at desc limit {$offset},{$size}";
-        $orders = $this->orderModel->getOrder($select, $ext1, array($this->user->id));
+        $orders = $this->orderModel->getList($select, $ext1, array($this->user->id));
         $ext2 = "where sender_id = ? and `deleted_at` is null";
-        $count = $this->orderModel->getOrderNum($ext2, array($this->user->id));
+        $count = $this->orderModel->getTotal($ext2, array($this->user->id));
         foreach ($orders as &$v) {
             $v['content'] = $this->limit($v['content'], 100, '...');
             if (!empty($v['sender_id'])) {
-                $sender = $this->userModel->getUserById($v['sender_id'], array('avatar'));
+                $sender = $this->userModel->getById($v['sender_id'], array('avatar'));
                 $v['sender_avatar'] = $sender['avatar'];
             }
             unset($v['sender_id']);

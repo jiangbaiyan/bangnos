@@ -1,10 +1,5 @@
 <?php
 
-use Nos\Comm\Db;
-use Nos\Comm\Log;
-use Nos\Exception\CoreException;
-use Nos\Exception\OperateFailedException;
-
 /**
  * 订单模型
  * Created by PhpStorm.
@@ -13,9 +8,9 @@ use Nos\Exception\OperateFailedException;
  * Time: 11:35
  */
 
-class OrderModel{
+class OrderModel extends BaseModel {
 
-    private $table = 'orders';
+    public $table = 'orders';
 
     /**
      * 订单状态
@@ -47,132 +42,6 @@ class OrderModel{
         AWARD_SENDER = 1,
         AWARD_RECEIVER = 5;
 
-    /**
-     * 创建一条订单
-     * @param $data
-     * @return mixed
-     * @throws OperateFailedException
-     * @throws CoreException
-     */
-    public function create($data){
-        $keys = array_keys($data);
-        $vals = array_values($data);
-        $paras = array_fill(0, count($keys),'?');
-        $sql = "insert into {$this->table} (`" . join("`,`", $keys) . "`) values(" . join(",", $paras) . ")";
-        $rows = Db::update($sql, $vals);
-        if (!$rows){
-            Log::fatal('orderModel|create_order_failed|$data:' . json_encode($data) . '|sql:' . $sql);
-            throw new OperateFailedException('订单创建失败');
-        }
-        return $rows;
-    }
-
-    /**
-     * 删除订单
-     * @param bool $isSoft
-     * @param string $ext
-     * @param array $bind
-     * @return mixed
-     * @throws OperateFailedException
-     * @throws CoreException
-     */
-    public function delete($isSoft = false, $ext = '', $bind = array()){
-        if ($isSoft){
-            $time = date('Y-m-d H:i:s');
-            $this->update(array(
-                'deleted_at' => $time,
-            ), $ext, $bind);
-        } else{
-            $sql = "delete from {$this->table} " . $ext;
-            $rows = Db::update($sql, $bind);
-            if (!$rows){
-                Log::fatal('orderModel|delete_order_failed|$data:'  . '|sql:' . $sql . '|bind:' . json_encode($bind));
-                throw new OperateFailedException('订单删除失败');
-            }
-            return $rows;
-        }
-    }
-
-    /**
-     * 获取订单
-     * @param array $select
-     * @param string $ext
-     * @param array $bind
-     * @return mixed
-     * @throws CoreException
-     */
-    public function getOrder($select = array(), $ext = '', $bind = array()){
-        if (!is_array($select)){
-            $fields = $select;
-        } else if (empty($select)){
-            $fields = '*';
-        } else{
-            $fields = implode('`, `', $select);
-        }
-        if ($fields == '*'){
-            $sql = "select * from {$this->table} " . $ext;
-        } else{
-            $sql = "select `{$fields}` from {$this->table} " . $ext;
-        }
-        return Db::fetchAll($sql, $bind);
-    }
-
-    /**
-     * 获取订单数据总条数
-     * @param string $ext
-     * @param array $bind
-     * @return mixed
-     * @throws CoreException
-     */
-    public function getOrderNum($ext = '', $bind = array()){
-        $sql = "select count(*) as count from {$this->table} " . $ext;
-        $data = Db::fetchAll($sql, $bind);
-        return isset($data[0]['count']) ? $data[0]['count'] : array();
-    }
-
-    /**
-     * 根据id获取订单
-     * @param $id
-     * @param array $select
-     * @return array
-     * @throws CoreException
-     */
-    public function getOrderById($id, $select = array()){
-        $data = $this->getOrder($select, 'where id = ?', array($id));
-        return isset($data[0]) ? $data[0] : array();
-    }
-
-    /**
-     * 更新订单
-     * @param $data
-     * @param string $ext
-     * @param array $bind
-     * @return mixed
-     * @throws OperateFailedException
-     * @throws CoreException
-     */
-    public function update($data, $ext = '', $bind = array()){
-        if (!is_array($bind)){
-            $bind = array($bind);
-        }
-        $now = date('Y-m-d H:i:s');
-        $data = array_merge($data, array(
-            'updated_at' => $now
-        ));
-        $keys = array_keys($data);
-        $vals = array_values($data);
-        foreach ($keys as &$key){
-            $key .= '=?';
-        }
-        $keyStr = join(',', $keys);
-        $sql = "update {$this->table} set {$keyStr} " . $ext;
-        $rows = Db::update($sql, array_merge($vals, $bind));
-        if (!$rows){
-            Log::fatal('orderModel|update_order_failed|$data:'  . '|sql:' . $sql . '|bind:' . json_encode($bind));
-            throw new OperateFailedException('订单更新失败');
-        }
-        return $rows;
-    }
 
     /**
      * 获取两个订单之间的距离

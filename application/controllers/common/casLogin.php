@@ -194,13 +194,13 @@ class Common_CasLoginController extends BaseController{
      */
     private function getLatestUser($data){
         $userModel = new UserModel();
-        $user = $userModel->getUserByUid($data['uid']);
+        $user = $userModel->getByUid($data['uid']);
         return $user;
         if (!$user){
             $userModel->create($data);
         } else{
             $userModel->update($data, 'where uid = ?', $data['uid']);
-            $user = $userModel->getUserByUid($data['uid']);
+            $user = $userModel->getByUid($data['uid']);
         }
         return $user;
     }

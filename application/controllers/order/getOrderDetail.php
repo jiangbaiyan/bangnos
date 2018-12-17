@@ -36,9 +36,9 @@ class Order_GetOrderDetailController extends BaseController{
 
     public function indexAction()
     {
-        $order = $this->orderModel->getOrderById($this->params['id']);
-        $sender = $this->userModel->getUserById($order['sender_id']);
-        $receiver = $this->userModel->getUserById($order['receiver_id']);
+        $order = $this->orderModel->getById($this->params['id']);
+        $sender = $this->userModel->getById($order['sender_id']);
+        $receiver = $this->userModel->getById($order['receiver_id']);
         Response::apiSuccess(array_merge($order, array(
             'sender' => $sender,
             'receiver' => $receiver

@@ -37,12 +37,12 @@ class Pay_TransferController extends BaseController{
 
     public function indexAction()
     {
-        $order = $this->orderModel->getOrderById($this->params['id']);
+        $order = $this->orderModel->getById($this->params['id']);
         if ($order->status != OrderModel::STATUS_WAITING_COMMENT){
             Log::notice('wxpay|wrong_order_status|order:' . json_encode($order));
             throw new OperateFailedException('错误的订单状态');
         }
-        $receiver = $this->userModel->getUserById($order['receiver_id']);
+        $receiver = $this->userModel->getById($order['receiver_id']);
         if (empty($receiver['openid']) || empty($order['uuid']) || empty($order['price']) || empty($order['title'])){
             Log::notice('wxpay|transfer_params_error');
             throw new OperateFailedException('转账参数不正确');
