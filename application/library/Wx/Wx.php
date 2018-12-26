@@ -106,7 +106,7 @@ class Wx{
                 $config['data']['keyword2']['value'] = $params['created_at'];
                 $config['data']['keyword3']['value'] = $params['type'];
                 $config['data']['keyword4']['value'] = $params['title'];
-                $config['data']['keyword5']['value'] = $params['price'];
+                $config['data']['keyword5']['value'] = $params['price'] . '元';
                 break;
         }
         $res = Request::send('POST', $url, json_encode($config), array(

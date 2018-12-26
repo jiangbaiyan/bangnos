@@ -1,5 +1,6 @@
 <?php
 
+use Nos\Comm\Config;
 use Nos\Comm\Log;
 use Nos\Comm\Validator;
 use Nos\Exception\OperateFailedException;
@@ -64,11 +65,12 @@ class Pay_UnifyPayController extends BaseController{
         }
         Log::notice('wxpay|unify_pay_res:|res:' . json_encode($res));
         $arr = explode('=', $res['package']);
+        $status = Config::get('order.STATUS_MAPPING');
         Wx::sendModelInfo($this->user->openid, Wx::MODEL_RELEASE_ORDER, array(
             'form_id'    => $arr[1],
             'created_at' => $order['created_at'],
             'uuid'       => $order['uuid'],
-            'type'       => '悬赏提问',
+            'type'       => $status[$order['type']],
             'title'      => $order['title'],
             'price'      => $order['price']
         ));
