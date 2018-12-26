@@ -117,8 +117,8 @@ class Wx{
         ));
         $res = json_decode($res, true);
         if (isset($res['errmsg'])){
-            throw new OperateFailedException('模板消息发送失败');
             Log::fatal('wx|send_model_info_failed|msg:' . json_encode($res));
+            throw new OperateFailedException('模板消息发送失败');
         }
         return true;
     }

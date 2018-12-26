@@ -63,6 +63,7 @@ class Pay_UnifyPayController extends BaseController{
             Log::fatal('wxpay|error:' . json_encode($e->getMessage()));
             throw new OperateFailedException('调用支付接口异常');
         }
+        $res = json_decode(json_encode($res),true);
         Log::notice('wxpay|unify_pay_res:|res:' . json_encode($res));
         $arr = explode('=', $res['package']);
         $status = Config::get('order.STATUS_MAPPING');
