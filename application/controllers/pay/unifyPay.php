@@ -1,6 +1,5 @@
 <?php
 
-use Monolog\Logger;
 use Nos\Comm\Log;
 use Nos\Comm\Validator;
 use Nos\Exception\OperateFailedException;
@@ -51,7 +50,7 @@ class Pay_UnifyPayController extends BaseController{
         }
         $params = array(
             'out_trade_no' => $order['uuid'],
-            'total_fee' => (intval($order['price'])) * 100,
+            'total_fee' => ($order['price']) * 100,
             'body' => $order['title'],
             'openid' => $this->user->openid
         );
@@ -64,6 +63,15 @@ class Pay_UnifyPayController extends BaseController{
             throw new OperateFailedException('调用支付接口异常');
         }
         Log::notice('wxpay|unify_pay_res:|res:' . json_encode($res));
+        $arr = explode('=', $res['package']);
+        Wx::sendModelInfo($this->user->openid, Wx::MODEL_RELEASE_ORDER, array(
+            'form_id'    => $arr[1],
+            'created_at' => $order['created_at'],
+            'uuid'       => $order['uuid'],
+            'type'       => '悬赏提问',
+            'title'      => $order['title'],
+            'price'      => $order['price']
+        ));
         Response::apiSuccess($res);
     }
 }

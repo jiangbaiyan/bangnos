@@ -73,6 +73,7 @@ class Wx{
         $appKey = $config['APP_KEY'];
         $url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=$appId&secret=$appKey";
         $res = Request::send('GET', $url);
+        $res = json_decode($res, true);
         if (isset($res['errmsg'])){
             Log::fatal('wx|get_access_token_failed|msg:' . json_encode($res));
             throw new OperateFailedException('获取access_token失败');
@@ -88,6 +89,7 @@ class Wx{
      * @param $openid
      * @param $modelNum
      * @param array $params
+     * @return bool
      * @throws OperateFailedException
      * @throws \Nos\Exception\CoreException
      */
@@ -107,16 +109,18 @@ class Wx{
                 $config['data']['keyword5']['value'] = $params['price'];
                 break;
         }
-        $res = Request::send('POST', $url, $config, array(
+        $res = Request::send('POST', $url, json_encode($config), array(
             CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($config)
             )
         ));
+        $res = json_decode($res, true);
         if (isset($res['errmsg'])){
+            throw new OperateFailedException('模板消息发送失败');
             Log::fatal('wx|send_model_info_failed|msg:' . json_encode($res));
         }
-        return;
+        return true;
     }
 
     /**
