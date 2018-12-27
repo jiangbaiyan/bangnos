@@ -41,14 +41,14 @@ class Common_LoginController extends BaseController{
     public function indexAction()
     {
         $phone = $this->params['phone'];
-        $frontCode = $this->params['code'];
-        $key = sprintf(self::REDIS_SMS_VERIFY,$phone);
-        $backCode = Redis::get($key);
-        if ($frontCode != $backCode){
-            Log::notice('sms|wrong_sms_code|key:' . $key . '|frontCode:' . $frontCode . '|backCode:' . $backCode);
-            throw new OperateFailedException('短信验证码验证失败，请重试');
-        }
-        $openid = Wx::getOpenid($this->params['code']);
+//        $frontCode = $this->params['code'];
+//        $key = sprintf(self::REDIS_SMS_VERIFY,$phone);
+//        $backCode = Redis::get($key);
+//        if ($frontCode != $backCode){
+//            Log::notice('sms|wrong_sms_code|key:' . $key . '|frontCode:' . $frontCode . '|backCode:' . $backCode);
+//            throw new OperateFailedException('短信验证码验证失败，请重试');
+//        }
+        $openid = Wx::getOpenid($this->params['wxCode']);
         $data = array(
             'phone' => $phone,
             'name'  => $this->params['nickname'],
@@ -83,12 +83,12 @@ class Common_LoginController extends BaseController{
      */
     private function getLatestUser($data){
         $userModel = new UserModel();
-        $user = $userModel->getByOpenid($data['openid']);
+        $user = $userModel->getByPhone($data['phone']);
         if (!$user){
             $userModel->create($data);
         } else{
-            $userModel->updateByOpenid($data['openid'], $data);
-            $user = $userModel->getByOpenid($data['openid']);
+            $userModel->updateByPhone($data['phone'], $data);
+            $user = $userModel->getByPhone($data['phone']);
         }
         return $user;
     }

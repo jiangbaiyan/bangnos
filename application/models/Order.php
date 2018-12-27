@@ -67,5 +67,16 @@ class OrderModel extends BaseModel {
         return round($s,2) . 'km';
     }
 
+    /**
+     * 根据uuid获取订单
+     * @param $uuid
+     * @param array $select
+     * @return array
+     * @throws \Nos\Exception\CoreException
+     */
+    public function getByUuid($uuid, $select = array()){
+        $data = $this->getList($select, 'where uuid = ?', array($uuid));
+        return isset($data[0]) ? $data[0] : array();
+    }
 
 }

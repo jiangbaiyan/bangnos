@@ -14,7 +14,7 @@ use Nos\Http\Response;
 
 class HelpOthers_GetReleasedOrderDetailController extends BaseController{
 
-    public $needAuth = true;
+    public $needAuth = false;
 
     private $orderModel;
 

@@ -55,11 +55,13 @@ class HelpOthers_GetReleasedOrderListController extends BaseController{
         $curLng = $this->params['longitude'];
         $curLat = $this->params['latitude'];
         foreach ($orders as &$order){
-            $orderLng = $orders['longitude'];
-            $orderLat = $orders['latitude'];
+            isset($orders['longitude']) && $orderLng = $orders['longitude'];
+            isset($orders['latitude']) && $orderLat = $orders['latitude'];
+            if (!isset($orderLng) | !isset($orderLat)){
+                continue;
+            }
             $order['$distance'] = $this->orderModel->getDistance($curLng, $curLat, $orderLng, $orderLat);
         }
-        array_multisort(array_column($orders, 'distance'), SORT_ASC, SORT_NUMERIC, $orders);
         $count = count($orders);
         $pageData = Page::paginate($count, $page, $size);
         Response::apiSuccess(array_merge(array('data' => $orders), $pageData));

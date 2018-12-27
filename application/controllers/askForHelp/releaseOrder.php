@@ -48,6 +48,7 @@ class AskForHelp_ReleaseOrderController extends BaseController{
     public function indexAction()
     {
         $data = array();
+        $uuid = time() . mt_rand(0, 100000);
         $data['title'] = $this->params['title'];
         $data['content'] = $this->params['content'];
         $data['begin_time'] = $this->params['beginTime'];
@@ -55,7 +56,7 @@ class AskForHelp_ReleaseOrderController extends BaseController{
         $data['type'] = $this->params['type'];
         $data['status'] = OrderModel::STATUS_RELEASED;
         $data['price'] = $this->params['price'];
-        $data['uuid'] = time() . mt_rand(0, 100000);
+        $data['uuid'] = $uuid;
         $data['longitude'] = $this->params['longitude'];
         $data['latitude'] = $this->params['latitude'];
         $data['sender_id'] = $this->user->id;
@@ -67,7 +68,8 @@ class AskForHelp_ReleaseOrderController extends BaseController{
             Log::fatal('ask|insert_into_orders_failed|data:' . json_encode($data));
             throw new OperateFailedException('新订单创建失败，请重试');
         }
-        Response::apiSuccess();
+        $order = $this->orderModel->getByUuid($uuid);
+        Response::apiSuccess(array('id' => $order['id']));
     }
 
 }

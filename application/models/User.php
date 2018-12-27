@@ -26,26 +26,26 @@ class UserModel extends BaseModel {
 
     /**
      * 根据openid获取用户
-     * @param $openid
+     * @param $phone
      * @param array $select
      * @return array
      * @throws CoreException
      */
-    public function getByOpenid($openid, $select = array()){
-        $data = $this->getList($select, 'where openid = ?', array($openid));
+    public function getByPhone($phone, $select = array()){
+        $data = $this->getList($select, 'where phone = ?', array($phone));
         return isset($data[0]) ? $data[0] : array();
     }
 
     /**
      * 根据openid更新用户
-     * @param $openid
+     * @param $phone
      * @param $data
      * @return mixed
      * @throws CoreException
      * @throws \Nos\Exception\OperateFailedException
      */
-    public function updateByOpenid($openid, $data){
-        return $this->update($data, 'where openid = ?', $openid);
+    public function updateByPhone($phone, $data){
+        return $this->update($data, 'where phone = ?', $phone);
     }
 
 }
