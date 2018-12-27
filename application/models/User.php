@@ -24,4 +24,28 @@ class UserModel extends BaseModel {
         return isset($data[0]) ? $data[0] : array();
     }
 
+    /**
+     * 根据openid获取用户
+     * @param $openid
+     * @param array $select
+     * @return array
+     * @throws CoreException
+     */
+    public function getByOpenid($openid, $select = array()){
+        $data = $this->getList($select, 'where openid = ?', array($openid));
+        return isset($data[0]) ? $data[0] : array();
+    }
+
+    /**
+     * 根据openid更新用户
+     * @param $openid
+     * @param $data
+     * @return mixed
+     * @throws CoreException
+     * @throws \Nos\Exception\OperateFailedException
+     */
+    public function updateByOpenid($openid, $data){
+        return $this->update($data, 'where openid = ?', $openid);
+    }
+
 }
